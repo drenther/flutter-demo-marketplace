@@ -105,11 +105,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _goToTransaction,
-        tooltip: 'Go to Transaction',
-        child: Icon(Icons.arrow_right),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
