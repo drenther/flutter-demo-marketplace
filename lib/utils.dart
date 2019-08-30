@@ -45,3 +45,8 @@ Future<String> fetchRedirectURL(String orderRef, int amount) async {
 
   return _getValueFromJSON(jsonResponse, 'redirectUrl');
 }
+
+Future<void> acknowledgeTransaction(String transactionRef) async {
+  await http
+      .put('$API_URL/thirdparty/merchants/credit/$transactionRef/acknowledge');
+}
