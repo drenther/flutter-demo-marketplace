@@ -9,14 +9,14 @@ const CLIENT_ID = '5aXqYKfyhppH9iamUFcQLzQ36xQm7mqz';
 const CLIENT_SECRET =
     'GV3TWAUMWJEAIskm4SEN4IQLTYTvHZI8QUsop3w88_wLBS8PHk8tKGSK3k3acUXX';
 
-const REDIRECT_URL = 'https://cp-b2bshop-dev.herokuapp.com/transaction';
 const REF = '5d36e27da8cd80438500966e';
+const REDIRECT_URL = 'https://cp-b2bshop-dev.herokuapp.com/transaction';
 
 String _getValueFromJSON(Map<String, dynamic> json, key) {
   return json[key];
 }
 
-Future<String> fetchAccessToken() async {
+Future<String> _fetchAccessToken() async {
   final response = await http.post('$API_URL/thirdparty/merchants/accessToken',
       body: {'clientId': CLIENT_ID, 'clientSecret': CLIENT_SECRET});
 
@@ -26,7 +26,7 @@ Future<String> fetchAccessToken() async {
 }
 
 Future<String> fetchRedirectURL(String orderRef, int amount) async {
-  final accessToken = await fetchAccessToken();
+  final accessToken = await _fetchAccessToken();
 
   final response =
       await http.post('$API_URL/thirdparty/merchants/credit/initiate', body: {
@@ -37,8 +37,7 @@ Future<String> fetchRedirectURL(String orderRef, int amount) async {
     'redirectSuccessUrl': REDIRECT_URL,
     'redirectFailureUrl': REDIRECT_URL
   }, headers: {
-    HttpHeaders.authorizationHeader: 'Bearer $accessToken',
-    HttpHeaders.contentTypeHeader: 'application/json'
+    HttpHeaders.authorizationHeader: 'Bearer $accessToken'
   });
 
   final jsonResponse = json.decode(response.body);
@@ -47,6 +46,9 @@ Future<String> fetchRedirectURL(String orderRef, int amount) async {
 }
 
 Future<void> acknowledgeTransaction(String transactionRef) async {
-  await http
-      .put('$API_URL/thirdparty/merchants/credit/$transactionRef/acknowledge');
+  final accessToken = await _fetchAccessToken();
+
+  await http.put(
+      '$API_URL/thirdparty/merchants/credit/$transactionRef/acknowledge',
+      headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
 }
